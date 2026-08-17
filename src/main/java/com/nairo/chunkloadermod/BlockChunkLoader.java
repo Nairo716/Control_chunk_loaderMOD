@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
@@ -21,6 +22,7 @@ public class BlockChunkLoader extends BlockContainer {
         setHardness(5.0F);
         setStepSound(soundTypeMetal);
         setBlockName("chunkloader_block");
+        setCreativeTab(CreativeTabs.tabBlock);
     }
 
     @Override

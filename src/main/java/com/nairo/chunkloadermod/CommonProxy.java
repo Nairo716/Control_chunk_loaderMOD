@@ -18,8 +18,13 @@ public class CommonProxy {
         Control_chunk_loaderMOD.LOG.info(Config.greeting);
         Control_chunk_loaderMOD.LOG.info("I am MyMod at version " + Tags.VERSION);
 
-        // ワールド再読み込み時にチケットを復元するためのコールバック登録
         ForgeChunkManager.setForcedChunkLoadingCallback(Control_chunk_loaderMOD.instance, new ChunkLoaderCallback());
+
+        Control_chunk_loaderMOD.NETWORK.registerMessage(
+            MessageSetRange.Handler.class,
+            MessageSetRange.class,
+            0,
+            cpw.mods.fml.relauncher.Side.SERVER);
     }
 
     public void init(FMLInitializationEvent event) {

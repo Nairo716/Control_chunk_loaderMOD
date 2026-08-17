@@ -1,6 +1,9 @@
 package com.nairo.chunkloadermod;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -10,9 +13,14 @@ public class TileEntityChunkLoader extends TileEntity {
 
     private Ticket chunkTicket;
     private boolean active = false;
+    private RangeMode rangeMode = RangeMode.SIZE_1;
 
     public boolean isActive() {
         return active;
+    }
+
+    public RangeMode getRangeMode() {
+        return rangeMode;
     }
 
     public void setActive(boolean shouldBeActive) {
@@ -29,6 +37,24 @@ public class TileEntityChunkLoader extends TileEntity {
             stopLoading();
         }
         markDirty();
+        syncToClient();
+    }
+
+    /** GUIから範囲を変更する。稼働中なら古いチケットを解放し新しい範囲で取り直す */
+    public void setRangeMode(RangeMode newMode) {
+        if (worldObj == null || worldObj.isRemote) {
+            return;
+        }
+        if (newMode == rangeMode) {
+            return;
+        }
+        rangeMode = newMode;
+        if (active) {
+            stopLoading();
+            startLoading();
+        }
+        markDirty();
+        syncToClient();
     }
 
     private void startLoading() {
@@ -66,17 +92,8 @@ public class TileEntityChunkLoader extends TileEntity {
     }
 
     private void forceAllChunks(Ticket ticket) {
-        int radius = Config.loadRadiusBlocks;
-
-        int minChunkX = (xCoord - radius) >> 4;
-        int maxChunkX = (xCoord + radius) >> 4;
-        int minChunkZ = (zCoord - radius) >> 4;
-        int maxChunkZ = (zCoord + radius) >> 4;
-
-        for (int cx = minChunkX; cx <= maxChunkX; cx++) {
-            for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(cx, cz));
-            }
+        for (ChunkCoordIntPair pair : rangeMode.getChunksToLoad(xCoord, zCoord)) {
+            ForgeChunkManager.forceChunk(ticket, pair);
         }
     }
 
@@ -90,11 +107,33 @@ public class TileEntityChunkLoader extends TileEntity {
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tag.setBoolean("active", active);
+        tag.setInteger("rangeMode", rangeMode.ordinal());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         active = tag.getBoolean("active");
+        rangeMode = RangeMode.byOrdinalSafe(tag.getInteger("rangeMode"));
+    }
+
+    // ==== クライアントへの状態同期(GUI表示用) ====
+
+    private void syncToClient() {
+        if (worldObj != null && !worldObj.isRemote) {
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+    }
+
+    @Override
+    public Packet getDescriptionPacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        readFromNBT(packet.func_148857_g());
     }
 }

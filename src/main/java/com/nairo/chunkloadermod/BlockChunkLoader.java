@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -54,12 +53,10 @@ public class BlockChunkLoader extends BlockContainer {
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
         float hitY, float hitZ) {
-        if (!world.isRemote) {
-            TileEntity te = world.getTileEntity(x, y, z);
-            if (te instanceof TileEntityChunkLoader) {
-                TileEntityChunkLoader loader = (TileEntityChunkLoader) te;
-                player.addChatMessage(new ChatComponentText("チャンクローダー状態: " + (loader.isActive() ? "ON" : "OFF")));
-            }
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof TileEntityChunkLoader && world.isRemote) {
+            net.minecraft.client.Minecraft.getMinecraft()
+                .displayGuiScreen(new GuiChunkLoader((TileEntityChunkLoader) te));
         }
         return true;
     }

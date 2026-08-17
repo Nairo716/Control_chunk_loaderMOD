@@ -13,14 +13,16 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 @Mod(
     modid = Control_chunk_loaderMOD.MODID,
     version = Tags.VERSION,
-    name = "MyMod",
+    name = "Control_chunk_loaderMOD",
     acceptedMinecraftVersions = "[1.7.10]")
 public class Control_chunk_loaderMOD {
 
     public static final String MODID = "mymodid";
     public static final Logger LOG = LogManager.getLogger(MODID);
 
-    @SidedProxy(clientSide = "com.myname.mymodid.ClientProxy", serverSide = "com.myname.mymodid.CommonProxy")
+    @SidedProxy(
+        clientSide = "com.nairo.chunkloadermod.ClientProxy",
+        serverSide = "com.nairo.chunkloadermod.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler

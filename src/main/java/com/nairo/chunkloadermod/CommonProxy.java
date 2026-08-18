@@ -33,6 +33,10 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileEntityChunkLoader.class, Control_chunk_loaderMOD.MODID + "_chunkloader_te");
     }
 
+    public void openChunkLoaderGui(TileEntityChunkLoader te) {
+        // サーバー側では何もしない
+    }
+
     public void postInit(FMLPostInitializationEvent event) {}
 
     public void serverStarting(FMLServerStartingEvent event) {

@@ -55,8 +55,7 @@ public class BlockChunkLoader extends BlockContainer {
         float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TileEntityChunkLoader && world.isRemote) {
-            net.minecraft.client.Minecraft.getMinecraft()
-                .displayGuiScreen(new GuiChunkLoader((TileEntityChunkLoader) te));
+            Control_chunk_loaderMOD.proxy.openChunkLoaderGui((TileEntityChunkLoader) te);
         }
         return true;
     }

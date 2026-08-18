@@ -2,7 +2,9 @@ package com.nairo.chunkloadermod;
 
 public class ClientProxy extends CommonProxy {
 
-    // Override CommonProxy methods here, if you want a different behaviour on the client (e.g. registering renders).
-    // Don't forget to call the super methods as well.
-
+    @Override
+    public void openChunkLoaderGui(TileEntityChunkLoader te) {
+        net.minecraft.client.Minecraft.getMinecraft()
+            .displayGuiScreen(new GuiChunkLoader(te));
+    }
 }

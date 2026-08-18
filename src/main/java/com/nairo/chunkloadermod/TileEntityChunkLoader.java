@@ -40,7 +40,9 @@ public class TileEntityChunkLoader extends TileEntity {
         syncToClient();
     }
 
-    /** GUIから範囲を変更する。稼働中なら古いチケットを解放し新しい範囲で取り直す */
+    /**
+     * GUIから範囲を変更する。稼働中なら古いチケットを解放し新しい範囲で取り直す
+     */
     public void setRangeMode(RangeMode newMode) {
         if (worldObj == null || worldObj.isRemote) {
             return;
@@ -128,12 +130,15 @@ public class TileEntityChunkLoader extends TileEntity {
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        writeToNBT(tag);
+        this.writeToNBT(tag);
         return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        readFromNBT(packet.func_148857_g());
+        NBTTagCompound tag = packet.func_148857_g();
+        if (tag != null) {
+            this.readFromNBT(tag);
+        }
     }
 }

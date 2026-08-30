@@ -149,6 +149,7 @@ public class TileEntityChunkLoader extends TileEntity {
             this.readFromNBT(tag);
         }
     }
+
     /**
      * ダイヤの剣を手に持っている間、チャンクローダーブロックの位置にビーコン風の光の柱を表示する。
      */

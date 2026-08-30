@@ -237,6 +237,7 @@ public class TileEntityChunkLoader extends TileEntity {
                 tess.addVertexWithUV(x2, 0, z2, 1, texOffset + 1.0F);
             }
 
+
             tess.draw();
         }
     }
